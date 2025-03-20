@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>马斯拉克职业倦怠量表(MBI)测试</title>
+    <style>
+        :root {
+            --primary-color: #65a3a3;
+            --secondary-color: #f0f6f6;
+            --accent-color: #cadbdb;
+            --text-color: #4a5859;
+            --light-text: #7c9293;
+            --highlight: #a8c4c4;
+            --shadow: rgba(149, 178, 178, 0.15);
+            --ee-color: #e48370;
+            --dp-color: #e9b97e;
+            --pa-color: #80b192;
+        }
+        
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: #f8fafa;
+            background-image: linear-gradient(to bottom right, #f8fafa, #edf3f3);
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+        }
+        
+        .introduction {
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px var(--shadow);
+            line-height: 1.7;
+        }
+        
+        .introduction p {
+            margin-bottom: 15px;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            margin-bottom: 35px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: var(--secondary-color);
+            position: relative;
+        }
+        
+        .question:last-child {
+            margin-bottom: 10px;
+        }
+        
+        .question p {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .question-number {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 5px;
+        }
+        
+        .option {
+            background-color: white;
+            border: 1px solid var(--accent-color);
+            border-radius: 30px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--light-text);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .option:hover {
+            background-color: var(--highlight);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .result-container {
+            display: none;
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px var(--shadow);
+            margin-top: 30px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-section {
+            margin-bottom: 35px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: var(--secondary-color);
+        }
+        
+        .result-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .score-bar-container {
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .score-bar {
+            height: 12px;
+            background-color: #e6ecec;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 6px;
+            position: absolute;
+            left: 0;
+            transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        .emotional-exhaustion .score-fill {
+            background-color: var(--ee-color);
+        }
+        
+        .depersonalization .score-fill {
+            background-color: var(--dp-color);
+        }
+        
+        .personal-accomplishment .score-fill {
+            background-color: var(--pa-color);
+        }
+        
+        .level {
+            margin-top: 12px;
+            font-weight: 500;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .level-indicator {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .level-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #e6ecec;
+            margin-top: 6px;
+        }
+        
+        .level-dot.active {
+            background-color: var(--primary-color);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: block;
+            margin: 30px auto 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px var(--shadow);
+        }
+        
+        .btn:hover {
+            background-color: #538686;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .interpretation {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .interpretation:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 3px 0 0 3px;
+        }
+        
+        .interpretation h3 {
+            margin-top: 0;
+        }
+        
+        .score-value {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        .dimension-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        
+        .ee-icon {
+            background-color: var(--ee-color);
+        }
+        
+        .dp-icon {
+            background-color: var(--dp-color);
+        }
+        
+        .pa-icon {
+            background-color: var(--pa-color);
+        }
+        
+        .progress-stages {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding: 0 3px;
+            color: var(--light-text);
+            font-size: 0.8rem;
+        }
+        
+        .coping-tips {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .coping-tips h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .tip {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .tip:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .quiz-container, .result-container, .introduction {
+                padding: 20px 15px;
+            }
+            
+            .question {
+                padding: 15px;
+            }
+            
+            .options {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .option {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .interpretation:before {
+                width: 4px;
+            }
+        }
+        
+        .breathing-animation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            opacity: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+            animation: breathe 4s infinite ease-in-out;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.9); background-color: var(--primary-color); }
+            50% { transform: scale(1.1); background-color: #7dbdbd; }
+        }
+        
+        .breathing-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(248, 250, 250, 0.95);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            animation: breatheGuide 10s infinite ease-in-out;
+        }
+        
+        @keyframes breatheGuide {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            40% { transform: scale(1.4); opacity: 1; }
+            60% { transform: scale(1.4); opacity: 1; }
+        }
+        
+        .breathing-text {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .breathing-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--primary-color);
+            font-size: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>马斯拉克职业倦怠量表(MBI)测试</h1>
+    
+    <div class="introduction">
+        <p>欢迎来到职业倦怠自我评估。职业倦怠是一种慢性压力反应，会影响您的身心健康和工作表现。</p>
+        <p>马斯拉克职业倦怠量表(MBI)是一种广泛使用的测量工具，可以帮助您了解自己可能面临的职业倦怠程度。</p>
+        <p>本测试包含22个问题，分为三个维度：</p>
+        <p>
+            <span class="dimension-icon ee-icon"></span>情感耗竭 - 感到精力耗尽的程度<br>
+            <span class="dimension-icon dp-icon"></span>去人格化 - 对工作或服务对象采取冷漠态度的程度<br>
+            <span class="dimension-icon pa-icon"></span>个人成就感 - 对工作成就和效能的感知程度
+        </p>
+        <p><strong>评分标准</strong>：请根据您在工作中的真实感受选择最符合的选项</p>
+    </div>
+    
+    <div class="quiz-container" id="quiz">
+        <!-- 问题将通过JavaScript动态生成 -->
+    </div>
+    
+    <button class="btn" id="submit-btn">提交测试</button>
+    
+    <div class="result-container" id="result">
+        <h2>您的职业倦怠评估结果</h2>
+        
+        <div class="result-section emotional-exhaustion">
+            <h3><span class="dimension-icon ee-icon"></span>情感耗竭 (Emotional Exhaustion)</h3>
+            <p>衡量感到精力耗尽、情感资源被消耗殆尽的程度</p>
+            <p>得分：<span class="score-value" id="ee-score">0</span> / 54</p>
+            <div class="score-bar-container">
+                <div class="score-bar">
+                    <div class="score-fill" id="ee-bar"></div>
+                </div>
+                <div class="progress-stages">
+                    <span>低</span>
+                    <span>中</span>
+                    <span>高</span>
+                </div>
+            </div>
+            <div class="level" id="ee-level">
+                <span>程度：评估中...</span>
+                <div class="level-indicator">
+                    <div class="level-dot" id="ee-dot-1"></div>
+                    <div class="level-dot" id="ee-dot-2"></div>
+                    <div class="level-dot" id="ee-dot-3"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-section depersonalization">
+            <h3><span class="dimension-icon dp-icon"></span>去人格化 (Depersonalization)</h3>
+            <p>衡量对服务对象或工作采取冷漠、疏离态度的程度</p>
+            <p>得分：<span class="score-value" id="dp-score">0</span> / 30</p>
+            <div class="score-bar-container">
+                <div class="score-bar">
+                    <div class="score-fill" id="dp-bar"></div>
+                </div>
+                <div class="progress-stages">
+                    <span>低</span>
+                    <span>中</span>
+                    <span>高</span>
+                </div>
+            </div>
+            <div class="level" id="dp-level">
+                <span>程度：评估中...</span>
+                <div class="level-indicator">
+                    <div class="level-dot" id="dp-dot-1"></div>
+                    <div class="level-dot" id="dp-dot-2"></div>
+                    <div class="level-dot" id="dp-dot-3"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-section personal-accomplishment">
+            <h3><span class="dimension-icon pa-icon"></span>个人成就感 (Personal Accomplishment)</h3>
+            <p>衡量对自己工作能力和成就的评价</p>
+            <p>得分：<span class="score-value" id="pa-score">0</span> / 48</p>
+            <p><small>注：个人成就感得分越低表示倦怠程度越高</small></p>
+            <div class="score-bar-container">
+                <div class="score-bar">
+                    <div class="score-fill" id="pa-bar"></div>
+                </div>
+                <div class="progress-stages">
+                    <span>高</span>
+                    <span>中</span>
+                    <span>低</span>
+                </div>
+            </div>
+            <div class="level" id="pa-level">
+                <span>程度：评估中...</span>
+                <div class="level-indicator">
+                    <div class="level-dot" id="pa-dot-1"></div>
+                    <div class="level-dot" id="pa-dot-2"></div>
+                    <div class="level-dot" id="pa-dot-3"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="interpretation">
+            <h3>结果解释</h3>
+            <p>职业倦怠是由三个维度共同构成的多维问题：</p>
+            <ul>
+                <li><strong>情感耗竭</strong>：感到无法继续为工作付出情感和精力</li>
+                <li><strong>去人格化</strong>：对工作内容和对象持冷漠、麻木的态度</li>
+                <li><strong>个人成就感降低</strong>：感到工作能力下降，无法达成有价值的成果</li>
+            </ul>
+            <p id="burnout-diagnosis">综合诊断：评估中...</p>
+            
+            <div class="coping-tips" id="coping-tips">
+                <h4>缓解建议</h4>
+                <div id="tips-content">
+                    <!-- 建议将在JavaScript中动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn" id="restart-btn">重新测试</button>
+    </div>
+    
+    <div class="breathing-animation" id="breathing-btn">
+        <span>呼</span>
+    </div>
+    
+    <div class="breathing-modal" id="breathing-modal">
+        <div class="breathing-close" id="breathing-close">×</div>
+        <div class="breathing-circle" id="breathing-circle">吸气</div>
+        <div class="breathing-text" id="breathing-text">跟随圆圈的节奏呼吸</div>
+        <p style="color: var(--light-text);">深呼吸是缓解压力的有效方法</p>
+    </div>
+
+    <script>
+        // MBI问题列表
+        const questions = [
+            // 情感耗竭 (EE) - 问题 1, 2, 3, 6, 8, 13, 14, 16, 20
+            { id: 1, text: "我感到工作使我情感耗竭", dimension: "ee" },
+            { id: 2, text: "我感到在一天的工作结束时已精疲力竭", dimension: "ee" },
+            { id: 3, text: "当我早上起床面对又一天的工作时，我感到疲惫", dimension: "ee" },
+            { id: 6, text: "与人整天一起工作对我来说确实是一种压力", dimension: "ee" },
+            { id: 8, text: "我感到我的工作令我心力交瘁", dimension: "ee" },
+            { id: 13, text: "我对我的工作感到挫折", dimension: "ee" },
+            { id: 14, text: "我觉得我工作太辛苦了", dimension: "ee" },
+            { id: 16, text: "直接与人打交道给我带来太多压力", dimension: "ee" },
+            { id: 20, text: "我感到自己已经到了极限", dimension: "ee" },
+            
+            // 去人格化 (DP) - 问题 5, 10, 11, 15, 22
+            { id: 5, text: "我感到我对一些来访者/客户/同事采取冷漠的态度", dimension: "dp" },
+            { id: 10, text: "自从开始这份工作以来，我对人变得更加冷漠", dimension: "dp" },
+            { id: 11, text: "我担心这份工作会使我情感麻木", dimension: "dp" },
+            { id: 15, text: "我并不真正关心我的来访者/客户/同事发生了什么", dimension: "dp" },
+            { id: 22, text: "我感到来访者/客户/同事为他们的某些问题责备我", dimension: "dp" },
+            
+            // 个人成就感 (PA) - 问题 4, 7, 9, 12, 17, 18, 19, 21 (反向计分)
+            { id: 4, text: "我很容易理解我的来访者/客户/同事的感受", dimension: "pa" },
+            { id: 7, text: "我很有效地处理来访者/客户/同事的问题", dimension: "pa" },
+            { id: 9, text: "我觉得通过我的工作对他人的生活产生了积极影响", dimension: "pa" },
+            { id: 12, text: "我感到充满活力", dimension: "pa" },
+            { id: 17, text: "我能很容易地为来访者/客户/同事创造轻松的氛围", dimension: "pa" },
+            { id: 18, text: "在与来访者/客户/同事亲密工作后，我感到愉快", dimension: "pa" },
+            { id: 19, text: "在这份工作中，我已经完成了很多有价值的事情", dimension: "pa" },
+            { id: 21, text: "在我的工作中，我能够冷静地处理情感问题", dimension: "pa" },
+        ];
+
+        const optionLabels = [
+            "从不(0)",
+            "一年几次(1)",
+            "一月一次(2)",
+            "一月几次(3)",
+            "一周一次(4)", 
+            "一周几次(5)",
+            "每天(6)"
+        ];
+
+        // 初始化测试
+        function initTest() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+            
+            // 按问题ID排序
+            questions.sort((a, b) => a.id - b.id);
+            
+            // 生成问题
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                const questionNumber = document.createElement('div');
+                questionNumber.className = 'question-number';
+                questionNumber.textContent = index + 1;
+                questionDiv.appendChild(questionNumber);
+                
+                const questionText = document.createElement('p');
+                questionText.innerHTML = `<strong>${question.text}</strong>`;
+                questionDiv.appendChild(questionText);
+                
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                optionLabels.forEach((label, value) => {
+                    const option = document.createElement('div');
+                    option.className = 'option';
+                    option.textContent = label;
+                    option.setAttribute('data-value', value);
+                    option.setAttribute('data-question', index);
+                    
+                    option.addEventListener('click', function() {
+                        // 移除同一问题的其他选项的选中状态
+                        const siblings = this.parentNode.querySelectorAll('.option');
+                        siblings.forEach(sib => sib.classList.remove('selected'));
+                        
+                        // 添加当前选项的选中状态
+                        this.classList.add('selected');
+                    });
+                    
+                    optionsDiv.appendChild(option);
+                });
+                
+                questionDiv.appendChild(optionsDiv);
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        // 计算得分
+        function calculateScore() {
+            let scores = {
+                ee: 0, // 情感耗竭
+                dp: 0, // 去人格化
+                pa: 0  // 个人成就感
+            };
+            
+            let answered = true;
+            
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`.option[data-question="${index}"].selected`);
+                
+                if (selectedOption) {
+                    const value = parseInt(selectedOption.getAttribute('data-value'));
+                    scores[question.dimension] += value;
+                } else {
+                    answered = false;
+                }
+            });
+            
+            if (!answered) {
+                alert('请回答所有问题以获得准确的评估结果。');
+                return null;
+            }
+            
+            return scores;
+        }
+
+        // 评估倦怠水平
+        function evaluateBurnout(scores) {
+            // 情感耗竭评估
+            let eeLevel = '';
+            let eeDots = [false, false, false];
+            if (scores.ee >= 0 && scores.ee <= 16) {
+                eeLevel = '低度';
+                eeDots = [true, false, false];
+            } else if (scores.ee >= 17 && scores.ee <= 26) {
+                eeLevel = '中度';
+                eeDots = [true, true, false];
+            } else {
+                eeLevel = '高度';
+                eeDots = [true, true, true];
+            }
+            
+            // 去人格化评估
+            let dpLevel = '';
+            let dpDots = [false, false, false];
+            if (scores.dp >= 0 && scores.dp <= 6) {
+                dpLevel = '低度';
+                dpDots = [true, false, false];
+            } else if (scores.dp >= 7 && scores.dp <= 12) {
+                dpLevel = '中度';
+                dpDots = [true, true, false];
+            } else {
+                dpLevel = '高度';
+                dpDots = [true, true, true];
+            }
+            
+            // 个人成就感评估（注意：这个维度是反向的，分数低表示倦怠高）
+            let paLevel = '';
+            let paDots = [false, false, false];
+            if (scores.pa >= 39) {
+                paLevel = '低度'; // 低倦怠
+                paDots = [true, false, false];
+            } else if (scores.pa >= 32 && scores.pa <= 38) {
+                paLevel = '中度';
+                paDots = [true, true, false];
+            } else {
+                paLevel = '高度';
+                paDots = [true, true, true];
+            }
+            
+            // 综合诊断
+            let diagnosis = '';
+            let tips = [];
+            
+            if ((eeLevel === '高度' && dpLevel === '高度') || 
+                (eeLevel === '高度' && paLevel === '高度') || 
+                (dpLevel === '高度' && paLevel === '高度')) {
+                diagnosis = '您目前正在经历明显的职业倦怠症状。建议认真考虑工作与生活的平衡，并寻求专业支持。';
+                tips = [
+                    "考虑咨询专业的心理健康顾问或治疗师",
+                    "与上级讨论工作负担和期望",
+                    "设定明确的工作边界，学会说"不"",
+                    "每天保留一些时间进行放松活动和自我关怀",
+                    "改善睡眠质量和健康饮食习惯",
+                    "考虑短期休假来恢复精力"
+                ];
+            } else if (eeLevel === '高度' || dpLevel === '高度' || paLevel === '高度') {
+                diagnosis = '您在某些方面显示出职业倦怠的迹象。注意这些早期预警信号，主动采取措施来防止情况恶化。';
+                tips = [
+                    "每天安排短暂的休息时间",
+                    "寻找工作中有意义和令
